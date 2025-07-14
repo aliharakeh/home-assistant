@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ElectricalServices
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
@@ -185,49 +186,54 @@ fun PropertyCard(
                         value = property.renterName ?: "No renter assigned"
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    // Shareholders information
+                    if (property.shareholders.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    // Subscriptions information
-                    if (property.subscriptions.isEmpty()) {
-                        PropertyDetailRow(
-                            icon = Icons.Filled.ElectricalServices,
-                            label = "Electricity Subscriptions",
-                            value = "No subscriptions configured"
-                        )
-                    } else {
-                        Text(
-                            text = "Electricity Subscriptions:",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(start = 32.dp)
-                        )
-
-                        property.subscriptions.forEach { subscription ->
-                            val billCount = subscription.electricityBills.size
-                            val billSummary = if (billCount > 0) {
-                                // Group bills by currency and calculate totals
-                                val currencyTotals = subscription.electricityBills
-                                    .groupBy { it.currency }
-                                    .map { (currency, bills) ->
-                                        "${bills.sumOf { it.amount }} ${currency.symbol}"
-                                    }
-                                    .joinToString(", ")
-                                "$billCount bills, total: $currencyTotals"
-                            } else {
-                                "No bills recorded"
-                            }
-
-                            PropertyDetailRow(
-                                icon = Icons.Filled.ElectricalServices,
-                                label = subscription.name,
-                                value = billSummary
+                        Row(
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Group,
+                                contentDescription = "Shareholders",
+                                modifier = Modifier.size(20.dp),
+                                tint = androidx.compose.ui.graphics.Color(0xFF7B1FA2) // Purple for group/shareholders
                             )
-
-                            if (subscription != property.subscriptions.last()) {
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "Shareholders",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
                                 Spacer(modifier = Modifier.height(4.dp))
+                                property.shareholders.forEach { shareholder ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = shareholder.name,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Text(
+                                            text = shareholder.shareValue.toString(),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
+
                 }
             }
         }

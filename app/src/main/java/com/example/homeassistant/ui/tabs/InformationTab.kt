@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,9 +37,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.homeassistant.data.Property
 import com.example.homeassistant.data.RentDuration
+import com.example.homeassistant.data.Shareholder
 import com.example.homeassistant.data.Subscription
+import com.example.homeassistant.ui.components.dialogs.AddShareholderDialog
 import com.example.homeassistant.ui.components.dialogs.AddSubscriptionDialog
 import com.example.homeassistant.ui.components.dialogs.ConfirmationDialog
+import com.example.homeassistant.ui.components.dialogs.EditShareholderDialog
 
 @Composable
 fun InformationTab(
@@ -56,11 +60,20 @@ fun InformationTab(
     property: Property?,
     onDeleteProperty: ((Property) -> Unit)?,
     subscriptions: List<Subscription>,
-    onSubscriptionsChange: (List<Subscription>) -> Unit
+    onSubscriptionsChange: (List<Subscription>) -> Unit,
+    shareholders: List<Shareholder>,
+    onShareholdersChange: (List<Shareholder>) -> Unit
 ) {
     var showAddSubscriptionDialog by remember { mutableStateOf(false) }
     var showDeleteSubscriptionConfirmation by remember { mutableStateOf(false) }
     var subscriptionToDelete by remember { mutableStateOf(-1) }
+
+    // Shareholder dialog states
+    var showAddShareholderDialog by remember { mutableStateOf(false) }
+    var showEditShareholderDialog by remember { mutableStateOf(false) }
+    var showDeleteShareholderConfirmation by remember { mutableStateOf(false) }
+    var shareholderToEdit by remember { mutableStateOf<Shareholder?>(null) }
+    var shareholderToDelete by remember { mutableStateOf(-1) }
 
     Column(
         modifier = Modifier
@@ -191,6 +204,115 @@ fun InformationTab(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+            }
+                }
+
+        // Shareholders Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Shareholders",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    Button(
+                        onClick = { showAddShareholderDialog = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add Shareholder",
+                            modifier = Modifier.padding(end = 4.dp)
+                        )
+                        Text("Add")
+                    }
+                }
+
+                if (shareholders.isEmpty()) {
+                    Text(
+                        text = "No shareholders added yet",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    shareholders.forEachIndexed { index, shareholder ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text(
+                                        text = shareholder.name,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Text(
+                                        text = shareholder.shareValue.toString(),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+
+                                Row {
+                                    IconButton(
+                                        onClick = {
+                                            shareholderToEdit = shareholder
+                                            showEditShareholderDialog = true
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Edit,
+                                            contentDescription = "Edit Shareholder",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+
+                                    IconButton(
+                                        onClick = {
+                                            shareholderToDelete = index
+                                            showDeleteShareholderConfirmation = true
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Delete,
+                                            contentDescription = "Delete Shareholder",
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -360,6 +482,57 @@ fun InformationTab(
             onDismiss = {
                 showDeleteSubscriptionConfirmation = false
                 subscriptionToDelete = -1
+            }
+        )
+    }
+
+    // Add Shareholder Dialog
+    if (showAddShareholderDialog) {
+        AddShareholderDialog(
+            onDismiss = { showAddShareholderDialog = false },
+            onAdd = { shareholder ->
+                onShareholdersChange(shareholders + shareholder)
+                showAddShareholderDialog = false
+            }
+        )
+    }
+
+    // Edit Shareholder Dialog
+    if (showEditShareholderDialog && shareholderToEdit != null) {
+        EditShareholderDialog(
+            shareholder = shareholderToEdit!!,
+            onDismiss = {
+                showEditShareholderDialog = false
+                shareholderToEdit = null
+            },
+            onSave = { updatedShareholder ->
+                val index = shareholders.indexOf(shareholderToEdit)
+                if (index >= 0) {
+                    onShareholdersChange(shareholders.toMutableList().apply {
+                        set(index, updatedShareholder)
+                    })
+                }
+                showEditShareholderDialog = false
+                shareholderToEdit = null
+            }
+        )
+    }
+
+    // Delete Shareholder Confirmation Dialog
+    if (showDeleteShareholderConfirmation && shareholderToDelete >= 0) {
+        ConfirmationDialog(
+            title = "Delete Shareholder",
+            message = "Are you sure you want to delete ${shareholders[shareholderToDelete].name} from the shareholders list?",
+            onConfirm = {
+                onShareholdersChange(shareholders.toMutableList().apply {
+                    removeAt(shareholderToDelete)
+                })
+                showDeleteShareholderConfirmation = false
+                shareholderToDelete = -1
+            },
+            onDismiss = {
+                showDeleteShareholderConfirmation = false
+                shareholderToDelete = -1
             }
         )
     }

@@ -58,6 +58,7 @@ fun PropertyEditScreen(
     var rentDuration by remember { mutableStateOf(property?.rentDuration ?: RentDuration.MONTHLY) }
     var renterName by remember { mutableStateOf(property?.renterName ?: "") }
     var subscriptions by remember { mutableStateOf(property?.subscriptions ?: emptyList()) }
+    var shareholders by remember { mutableStateOf(property?.shareholders ?: emptyList()) }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var showGlobalAddBillDialog by remember { mutableStateOf(false) }
 
@@ -112,7 +113,8 @@ fun PropertyEditScreen(
                                 rentPrice = rentPrice.toDoubleOrNull() ?: 0.0,
                                 rentDuration = rentDuration,
                                 renterName = if (renterName.isBlank()) null else renterName,
-                                subscriptions = subscriptions
+                                subscriptions = subscriptions,
+                                shareholders = shareholders
                             )
                             onSaveProperty(newProperty)
                         },
@@ -251,7 +253,9 @@ fun PropertyEditScreen(
                     property = property,
                     onDeleteProperty = onDeleteProperty,
                     subscriptions = subscriptions,
-                    onSubscriptionsChange = { subscriptions = it }
+                    onSubscriptionsChange = { subscriptions = it },
+                    shareholders = shareholders,
+                    onShareholdersChange = { shareholders = it }
                 )
                 1 -> ElectricityBillsTab(
                     subscriptions = subscriptions,

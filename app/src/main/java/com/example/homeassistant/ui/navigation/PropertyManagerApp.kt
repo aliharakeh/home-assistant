@@ -12,6 +12,8 @@ import com.example.homeassistant.data.Currency
 import com.example.homeassistant.data.ElectricityBill
 import com.example.homeassistant.data.Property
 import com.example.homeassistant.data.RentDuration
+import com.example.homeassistant.data.ShareValue
+import com.example.homeassistant.data.Shareholder
 import com.example.homeassistant.data.Subscription
 import com.example.homeassistant.ui.screens.PropertyEditScreen
 import com.example.homeassistant.ui.screens.PropertyListScreen
@@ -32,6 +34,10 @@ fun PropertyManagerApp() {
                     rentPrice = 1200.0,
                     rentDuration = RentDuration.MONTHLY,
                     renterName = "John Doe",
+                    shareholders = listOf(
+                        Shareholder("Alice Johnson", ShareValue.Percentage(60.0)),
+                        Shareholder("Bob Smith", ShareValue.Percentage(40.0))
+                    ),
                     subscriptions = listOf(
                         Subscription(
                             name = "main",
@@ -75,6 +81,11 @@ fun PropertyManagerApp() {
                     rentPrice = 850.0,
                     rentDuration = RentDuration.MONTHLY,
                     renterName = null,
+                    shareholders = listOf(
+                        Shareholder("Emma Davis", ShareValue.CurrencyValue(15000.0, Currency.USD)),
+                        Shareholder("Michael Chen", ShareValue.CurrencyValue(10000.0, Currency.USD)),
+                        Shareholder("Sarah Wilson", ShareValue.Percentage(30.0))
+                    ),
                     subscriptions = listOf(
                         Subscription(
                             name = "main",
@@ -110,6 +121,10 @@ fun PropertyManagerApp() {
                     rentPrice = 24000.0,
                     rentDuration = RentDuration.YEARLY,
                     renterName = "Jane Smith",
+                    shareholders = listOf(
+                        Shareholder("David Rodriguez", ShareValue.Percentage(50.0)),
+                        Shareholder("Lisa Thompson", ShareValue.CurrencyValue(25000000.0, Currency.LBP))
+                    ),
                     subscriptions = listOf(
                         Subscription(
                             name = "main",
@@ -157,6 +172,10 @@ fun PropertyManagerApp() {
                     rentPrice = 2800.0,
                     rentDuration = RentDuration.MONTHLY,
                     renterName = "Michael Johnson",
+                    shareholders = listOf(
+                        Shareholder("Jennifer Lee", ShareValue.Percentage(75.0)),
+                        Shareholder("Robert Garcia", ShareValue.Percentage(25.0))
+                    ),
                     subscriptions = listOf(
                         Subscription(
                             name = "main",
@@ -217,6 +236,11 @@ fun PropertyManagerApp() {
                     rentPrice = 950.0,
                     rentDuration = RentDuration.MONTHLY,
                     renterName = null,
+                    shareholders = listOf(
+                        Shareholder("Amanda Clark", ShareValue.CurrencyValue(8000.0, Currency.USD)),
+                        Shareholder("Kevin Martinez", ShareValue.CurrencyValue(7000.0, Currency.USD)),
+                        Shareholder("Rachel Adams", ShareValue.CurrencyValue(5000.0, Currency.USD))
+                    ),
                     subscriptions = listOf(
                         Subscription(
                             name = "main",
