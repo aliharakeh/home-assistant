@@ -76,6 +76,9 @@ fun InformationTab(
     var shareholderToEdit by remember { mutableStateOf<Shareholder?>(null) }
     var shareholderToDelete by remember { mutableStateOf(-1) }
 
+    // Property deletion confirmation state
+    var showDeletePropertyConfirmation by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -463,7 +466,7 @@ fun InformationTab(
                     )
 
                     Button(
-                        onClick = { onDeleteProperty(property) },
+                        onClick = { showDeletePropertyConfirmation = true },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error,
@@ -562,6 +565,21 @@ fun InformationTab(
             onDismiss = {
                 showDeleteShareholderConfirmation = false
                 shareholderToDelete = -1
+            }
+        )
+    }
+
+    // Delete Property Confirmation Dialog
+    if (showDeletePropertyConfirmation && property != null && onDeleteProperty != null) {
+        ConfirmationDialog(
+            title = "Delete Property",
+            message = "Are you sure you want to delete \"${property.name}\"? This action cannot be undone and will permanently remove the property along with all its subscriptions, bills, and shareholder information.",
+            onConfirm = {
+                onDeleteProperty(property)
+                showDeletePropertyConfirmation = false
+            },
+            onDismiss = {
+                showDeletePropertyConfirmation = false
             }
         )
     }
