@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.homeassistant.ui.theme.getSemanticColors
 
 @Composable
 fun PropertyDetailRow(
@@ -27,6 +28,8 @@ fun PropertyDetailRow(
     isTitle: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val semanticColors = getSemanticColors()
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -34,25 +37,27 @@ fun PropertyDetailRow(
         Icon(
             imageVector = icon,
             contentDescription = label,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(22.dp),
             tint = when (icon) {
-                Icons.Filled.Person -> androidx.compose.ui.graphics.Color(0xFF7B1FA2) // Purple for person
-                Icons.Filled.ElectricalServices -> androidx.compose.ui.graphics.Color(0xFFFF9800) // Orange for electricity
+                Icons.Filled.Person -> semanticColors.shareholderPurple
+                Icons.Filled.ElectricalServices -> semanticColors.warningOrange
                 else -> MaterialTheme.colorScheme.onSurfaceVariant
             }
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = "$label:",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = if (isTitle) FontWeight.Medium else FontWeight.Normal
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = if (isTitle) FontWeight.Medium else FontWeight.Medium
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = if (value == "No renter assigned")
+                MaterialTheme.colorScheme.onSurfaceVariant
+            else MaterialTheme.colorScheme.onSurface,
             fontWeight = if (isTitle) FontWeight.Bold else FontWeight.Normal,
             modifier = Modifier.weight(1f)
         )

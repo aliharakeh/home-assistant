@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.homeassistant.data.Property
 import com.example.homeassistant.ui.components.items.PropertyDetailRow
+import com.example.homeassistant.ui.theme.getSemanticColors
 
 @Composable
 fun PropertyCard(
@@ -50,20 +51,21 @@ fun PropertyCard(
     onClick: (Property) -> Unit = {}
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+    val semanticColors = getSemanticColors()
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { onClick(property) },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             // Header with property name on left and expand button on right
             Row(
@@ -78,15 +80,15 @@ fun PropertyCard(
                     Icon(
                         imageVector = Icons.Filled.Home,
                         contentDescription = "Property",
-                        modifier = Modifier.size(20.dp),
-                        tint = androidx.compose.ui.graphics.Color(0xFF2E7D32) // Green for home
+                        modifier = Modifier.size(22.dp),
+                        tint = semanticColors.successGreen
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = property.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -102,7 +104,7 @@ fun PropertyCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Address and rent info row
             Row(
@@ -119,7 +121,7 @@ fun PropertyCard(
                         imageVector = Icons.Filled.LocationOn,
                         contentDescription = "Address",
                         modifier = Modifier.size(20.dp),
-                        tint = androidx.compose.ui.graphics.Color(0xFFD32F2F) // Red for location
+                        tint = semanticColors.locationRed
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
@@ -136,24 +138,24 @@ fun PropertyCard(
                     Icon(
                         imageVector = Icons.Filled.AttachMoney,
                         contentDescription = "Rent",
-                        modifier = Modifier.size(16.dp),
-                        tint = androidx.compose.ui.graphics.Color(0xFF388E3C) // Green for money
+                        modifier = Modifier.size(18.dp),
+                        tint = semanticColors.successGreen
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "${property.rentPrice}",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Icon(
                         imageVector = Icons.Filled.CalendarToday,
                         contentDescription = "Duration",
-                        modifier = Modifier.size(14.dp),
-                        tint = androidx.compose.ui.graphics.Color(0xFF1976D2) // Blue for calendar
+                        modifier = Modifier.size(16.dp),
+                        tint = semanticColors.infoBlue
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = property.rentDuration.name.lowercase().replaceFirstChar { it.uppercase() },
                         style = MaterialTheme.typography.bodySmall,
@@ -169,15 +171,15 @@ fun PropertyCard(
                 exit = shrinkVertically()
             ) {
                 Column {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    // Divider
+                    // Enhanced divider with better contrast
                     androidx.compose.material3.HorizontalDivider(
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
                         thickness = 1.dp
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     // Renter information
                     PropertyDetailRow(
@@ -188,7 +190,7 @@ fun PropertyCard(
 
                     // Shareholders information
                     if (property.shareholders.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         Row(
                             verticalAlignment = Alignment.Top
@@ -196,8 +198,8 @@ fun PropertyCard(
                             Icon(
                                 imageVector = Icons.Filled.Group,
                                 contentDescription = "Shareholders",
-                                modifier = Modifier.size(20.dp),
-                                tint = androidx.compose.ui.graphics.Color(0xFF7B1FA2) // Purple for group/shareholders
+                                modifier = Modifier.size(22.dp),
+                                tint = semanticColors.shareholderPurple
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
@@ -207,27 +209,39 @@ fun PropertyCard(
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                // Enhanced shareholder display with better contrast
                                 property.shareholders.forEach { shareholder ->
-                                    Row(
+                                    Card(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(horizontal = 8.dp, vertical = 2.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                            .padding(vertical = 4.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                                        ),
+                                        shape = RoundedCornerShape(8.dp)
                                     ) {
-                                        Text(
-                                            text = shareholder.name,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        Text(
-                                            text = shareholder.shareValue.toString(),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            fontWeight = FontWeight.Medium,
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = shareholder.name,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            Text(
+                                                text = shareholder.shareValue.toString(),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                fontWeight = FontWeight.Medium,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
                                     }
                                 }
                             }

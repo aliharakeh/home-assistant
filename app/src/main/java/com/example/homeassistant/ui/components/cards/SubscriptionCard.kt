@@ -3,10 +3,15 @@ package com.example.homeassistant.ui.components.cards
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ElectricalServices
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -25,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.example.homeassistant.data.Subscription
 import com.example.homeassistant.ui.components.dialogs.ConfirmationDialog
 import com.example.homeassistant.ui.components.items.BillItem
+import com.example.homeassistant.ui.theme.getSemanticColors
 
 @Composable
 fun SubscriptionCard(
@@ -36,54 +42,86 @@ fun SubscriptionCard(
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var showDeleteSubscriptionConfirmation by remember { mutableStateOf(false) }
     var deleteBillIndex by remember { mutableStateOf(-1) }
+    val semanticColors = getSemanticColors()
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp, vertical = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
         )
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // Header with subscription name and delete button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = subscription.name,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ElectricalServices,
+                        contentDescription = "Subscription",
+                        modifier = Modifier.size(20.dp),
+                        tint = semanticColors.warningOrange
+                    )
+                    Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+                    Text(
+                        text = subscription.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
 
                 IconButton(onClick = { showDeleteSubscriptionConfirmation = true }) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = "Delete Subscription",
-                        tint = MaterialTheme.colorScheme.error
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
 
+            // Bills content
             if (subscription.electricityBills.isEmpty()) {
-                Text(
-                    text = "No bills added yet",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
-                subscription.electricityBills.forEachIndexed { index, bill ->
-                    BillItem(
-                        bill = bill,
-                        onEdit = { onEditBill(index) },
-                        onDelete = {
-                            deleteBillIndex = index
-                            showDeleteConfirmation = true
-                        }
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "No bills added yet",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(16.dp)
                     )
+                }
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    subscription.electricityBills.forEachIndexed { index, bill ->
+                        BillItem(
+                            bill = bill,
+                            onEdit = { onEditBill(index) },
+                            onDelete = {
+                                deleteBillIndex = index
+                                showDeleteConfirmation = true
+                            }
+                        )
+                    }
                 }
             }
         }
