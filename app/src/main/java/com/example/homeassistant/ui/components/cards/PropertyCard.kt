@@ -188,6 +188,16 @@ fun PropertyCard(
                         value = property.renterName ?: "No renter assigned"
                     )
 
+                    // Electricity Code Number information
+                    if (property.electricityCodeNumber != null) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        PropertyDetailRow(
+                            icon = Icons.Filled.ElectricalServices,
+                            label = "Electricity Code",
+                            value = property.electricityCodeNumber
+                        )
+                    }
+
                     // Shareholders information
                     if (property.shareholders.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))

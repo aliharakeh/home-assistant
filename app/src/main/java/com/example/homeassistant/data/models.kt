@@ -31,6 +31,7 @@ data class Property(
     val id: String,
     val name: String,
     val address: String,
+    val electricityCodeNumber: String? = null, // New field for electricity code number
     val rentPrice: Double,
     val rentDuration: RentDuration,
     val renterName: String? = null, // Nullable if no renter
@@ -66,6 +67,7 @@ fun getIconForPropertyDetail(type: PropertyDetailType): ImageVector {
     return when (type) {
         PropertyDetailType.NAME -> Icons.Filled.Home
         PropertyDetailType.ADDRESS -> Icons.Filled.LocationOn
+        PropertyDetailType.ELECTRICITY_CODE_NUMBER -> Icons.Filled.ElectricalServices
         PropertyDetailType.RENT_PRICE -> Icons.Filled.AttachMoney
         PropertyDetailType.RENT_DURATION -> Icons.Filled.CalendarToday
         PropertyDetailType.RENTER_NAME -> Icons.Filled.Person
@@ -77,6 +79,7 @@ fun getIconForPropertyDetail(type: PropertyDetailType): ImageVector {
 enum class PropertyDetailType {
     NAME,
     ADDRESS,
+    ELECTRICITY_CODE_NUMBER,
     RENT_PRICE,
     RENT_DURATION,
     RENTER_NAME,

@@ -54,6 +54,7 @@ fun PropertyEditScreen(
 ) {
     var name by remember { mutableStateOf(property?.name ?: "") }
     var address by remember { mutableStateOf(property?.address ?: "") }
+    var electricityCodeNumber by remember { mutableStateOf(property?.electricityCodeNumber ?: "") }
     var rentPrice by remember { mutableStateOf(property?.rentPrice?.toString() ?: "") }
     var rentDuration by remember { mutableStateOf(property?.rentDuration ?: RentDuration.MONTHLY) }
     var renterName by remember { mutableStateOf(property?.renterName ?: "") }
@@ -110,6 +111,7 @@ fun PropertyEditScreen(
                                 id = property?.id ?: System.currentTimeMillis().toString(),
                                 name = name,
                                 address = address,
+                                electricityCodeNumber = if (electricityCodeNumber.isBlank()) null else electricityCodeNumber,
                                 rentPrice = rentPrice.toDoubleOrNull() ?: 0.0,
                                 rentDuration = rentDuration,
                                 renterName = if (renterName.isBlank()) null else renterName,
@@ -243,6 +245,8 @@ fun PropertyEditScreen(
                     onNameChange = { name = it },
                     address = address,
                     onAddressChange = { address = it },
+                    electricityCodeNumber = electricityCodeNumber,
+                    onElectricityCodeNumberChange = { electricityCodeNumber = it },
                     rentPrice = rentPrice,
                     onRentPriceChange = { rentPrice = it },
                     rentDuration = rentDuration,

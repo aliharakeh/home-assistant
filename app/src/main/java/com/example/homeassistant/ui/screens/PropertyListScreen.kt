@@ -53,7 +53,8 @@ fun PropertyListScreen(
             properties.filter { property ->
                 property.name.contains(searchQuery, ignoreCase = true) ||
                 property.address.contains(searchQuery, ignoreCase = true) ||
-                property.renterName?.contains(searchQuery, ignoreCase = true) == true
+                property.renterName?.contains(searchQuery, ignoreCase = true) == true ||
+                property.electricityCodeNumber?.contains(searchQuery, ignoreCase = true) == true
             }
         }
     }

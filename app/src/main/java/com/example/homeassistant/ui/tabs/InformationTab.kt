@@ -51,6 +51,8 @@ fun InformationTab(
     onNameChange: (String) -> Unit,
     address: String,
     onAddressChange: (String) -> Unit,
+    electricityCodeNumber: String,
+    onElectricityCodeNumberChange: (String) -> Unit,
     rentPrice: String,
     onRentPriceChange: (String) -> Unit,
     rentDuration: RentDuration,
@@ -120,6 +122,14 @@ fun InformationTab(
                     label = { Text("Address") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 2
+                )
+
+                OutlinedTextField(
+                    value = electricityCodeNumber,
+                    onValueChange = onElectricityCodeNumberChange,
+                    label = { Text("Electricity Code Number (Optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
             }
         }
